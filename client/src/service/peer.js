@@ -8,6 +8,11 @@ class PeerService {
             "stun:stun4.l.google.com:5349",
           ],
         },
+        {
+          urls: ["turn:13.250.13.83:3478?transport=udp"],
+          username: "YzYNCouZM1mhqhmseWk6",
+          credential: "YzYNCouZM1mhqhmseWk6",
+        },
       ],
     });
   }
