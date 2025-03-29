@@ -101,7 +101,14 @@ function MeetingControls({
           </Button>
         </div>
         {/* more */}
-        <Button onClick={() => setIsDrawerOpen((prev) => !prev)}>
+        <Button
+          style={{
+            minWidth: "0",
+            paddingLeft:"5px",
+            paddingRight:"5px",
+          }}
+          onClick={() => setIsDrawerOpen((prev) => !prev)}
+        >
           <MoreVertIcon />
         </Button>
         {/* more options */}
@@ -194,7 +201,7 @@ function MeetingControls({
           </div>
         </SwipeableDrawer>
 
-        <span className="text-gray-500">│</span>
+        {/* <span className="text-gray-500">│</span> */}
 
         {/* call end */}
         <Button onClick={() => {}} backgroundColor={"#DD402F"}>
