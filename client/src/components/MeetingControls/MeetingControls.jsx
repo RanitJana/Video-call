@@ -6,24 +6,22 @@ import MeetEmoji from "../MeetEmoji/MeetEmoji.jsx";
 import useMediaToggle from "../../hooks/useMediaToogle.js";
 import useDetectMediaState from "../../hooks/useDetectMediaState.js";
 import useShareScreen from "../../hooks/useShareScreen.js";
-import { toggleDrawer } from "../../features/drawerOpen/drawer.slice.js";
 import MeetingInfo from "../MeetingInof/MeetingInfo.jsx";
+import { toggleDrawer } from "../../features/drawerOpen/drawer.slice.js";
 
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
-import VideocamIcon from "@mui/icons-material/Videocam";
-import VideocamOffIcon from "@mui/icons-material/VideocamOff";
-import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
+import VideocamOffOutlinedIcon from "@mui/icons-material/VideocamOffOutlined";
+import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
 import PresentToAllIcon from "@mui/icons-material/PresentToAll";
 import CallEndIcon from "@mui/icons-material/CallEnd";
-import InfoIcon from "@mui/icons-material/Info";
-import ChatIcon from "@mui/icons-material/Chat";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import MeetingMessages from "../MeetingMessages/MeetingMessages.jsx";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
 function MeetingControls({
   myInfo,
@@ -39,11 +37,9 @@ function MeetingControls({
   const { toggleAudio, toggleVideo } = useMediaToggle(myInfo, setMyInfo, peer);
   const shareScreen = useShareScreen(myInfo, setMyInfo, peer);
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const [smallScreen, setSmallScreen] = useState(false);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const handleScreenSize = () => {
@@ -56,14 +52,26 @@ function MeetingControls({
     return () => window.removeEventListener("resize", handleScreenSize);
   }, []);
 
+  const toggleMore = (open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setIsDrawerOpen(open);
+  };
+
   return (
-    <div className="flex gap-4 w-full pt-4">
+    <div className="flex gap-4 w-full pt-4 justify-center relative">
       {!smallScreen && (
-        <div className="flex justify-start items-center w-full text-white font-bold text-nowrap overflow-hidden">
+        <div className="absolute left-0 top-[50%] flex justify-start items-center w-full text-white font-bold text-nowrap overflow-hidden">
           <GetDate />
         </div>
       )}
-      <div className="flex justify-center items-center gap-2 w-full">
+      <div className="flex justify-center items-center gap-1 w-full">
         {/* audio */}
         <Button
           onClick={toggleAudio}
@@ -76,93 +84,122 @@ function MeetingControls({
           onClick={toggleVideo}
           backgroundColor={!detectVideoState() ? "#B33D23" : null}
         >
-          {detectVideoState() ? <VideocamIcon /> : <VideocamOffIcon />}
+          {detectVideoState() ? (
+            <VideocamOutlinedIcon />
+          ) : (
+            <VideocamOffOutlinedIcon />
+          )}
         </Button>
+        {/* emoji */}
         <div className="relative">
           <MeetEmoji emojiOpen={emojiOpen} />
-          {/* emoji */}
-
           <Button
             onClick={() => setEmojiOpen((prev) => !prev)}
             backgroundColor={emojiOpen ? "purple" : null}
           >
-            {<EmojiEmotionsIcon />}
+            <EmojiEmotionsOutlinedIcon />
           </Button>
         </div>
-        {/* share screen */}
-        <Button onClick={shareScreen}>
-          <PresentToAllIcon />
+        {/* more */}
+        <Button onClick={() => setIsDrawerOpen((prev) => !prev)}>
+          <MoreVertIcon />
         </Button>
+        {/* more options */}
+        <SwipeableDrawer
+          anchor={"bottom"}
+          open={isDrawerOpen}
+          onClose={toggleMore(false)}
+          onOpen={toggleMore(true)}
+          sx={{
+            "& .MuiPaper-root": {
+              backgroundColor: "#202124",
+              padding: "1rem",
+              width: "18rem", // Set width to 80% or adjust as needed
+              margin: "0 auto",
+              borderRadius: "20px 20px 0 0",
+            },
+          }}
+        >
+          <div className="grid grid-cols-2 gap-2">
+            {/* meeting info */}
+            <div className="flex justify-center items-center flex-col w-full">
+              <Button
+                style={{
+                  backgroundColor: "transparent",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  textWrap: "wrap",
+                  textAlign: "center",
+                  width: "100%",
+                  height: "100%",
+                }}
+                onClick={() => {
+                  dispatch(toggleDrawer(0));
+                  setIsDrawerOpen(false);
+                  setDrawerHeading("Meeting details");
+                  setDrawerChild(<MeetingInfo />);
+                }}
+              >
+                <InfoOutlinedIcon style={{ color: "white" }} />
+                <span className="text-xs">Meeting Info</span>
+              </Button>
+            </div>
+            {/* share screen */}
+            <div className="flex justify-center items-center flex-col w-full">
+              <Button
+                onClick={() => {
+                  shareScreen();
+                  setIsDrawerOpen(false);
+                }}
+                style={{
+                  backgroundColor: "transparent",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  textWrap: "wrap",
+                  textAlign: "center",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
+                <PresentToAllIcon />
+                <span className="text-xs">Share screen</span>
+              </Button>
+            </div>
+            {/* meeting chat */}
+            <div className="flex justify-center items-center flex-col w-full">
+              <Button
+                style={{
+                  backgroundColor: "transparent",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  textWrap: "wrap",
+                  textAlign: "center",
+                  width: "100%",
+                  height: "100%",
+                }}
+                onClick={() => {
+                  dispatch(toggleDrawer(1));
+                  setIsDrawerOpen(false);
+                  setDrawerHeading("In-call messages");
+                  setDrawerChild(<MeetingMessages />);
+                }}
+              >
+                <ChatOutlinedIcon style={{ color: "white" }} />
+                <span className="text-xs">Messages</span>
+              </Button>
+            </div>
+          </div>
+        </SwipeableDrawer>
+
+        <span className="text-gray-500">│</span>
+
         {/* call end */}
         <Button onClick={() => {}} backgroundColor={"#DD402F"}>
           <CallEndIcon />
         </Button>
-      </div>
-
-      <div className="relative flex justify-end items-center w-full">
-        <SpeedDial
-          ariaLabel="SpeedDial openIcon example"
-          sx={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            "& .MuiFab-root": { boxShadow: "none" },
-          }}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          open={open}
-          icon={
-            open ? (
-              <KeyboardArrowDownIcon
-                style={{
-                  backgroundColor: "#333436",
-                  width: "100%",
-                  height: "100%",
-                  borderRadius: "50%",
-                  padding: "0.8rem",
-                }}
-              />
-            ) : (
-              <KeyboardArrowUpIcon
-                style={{
-                  backgroundColor: "#333436",
-                  width: "100%",
-                  height: "100%",
-                  borderRadius: "50%",
-                  padding: "0.8rem",
-                }}
-              />
-            )
-          }
-        >
-          <SpeedDialAction
-            icon={<InfoIcon style={{ color: "white" }} />}
-            sx={{
-              backgroundColor: "#333436",
-              "&:hover": { backgroundColor: "#333436" },
-            }}
-            onClick={() => {
-              dispatch(toggleDrawer(0));
-              setDrawerHeading("Meeting details");
-              setDrawerChild(<MeetingInfo />);
-              setOpen(false);
-            }}
-          />
-
-          <SpeedDialAction
-            icon={<ChatIcon style={{ color: "white" }} />}
-            sx={{
-              backgroundColor: "#333436",
-              "&:hover": { backgroundColor: "#333436" },
-            }}
-            onClick={() => {
-              dispatch(toggleDrawer(1));
-              setDrawerHeading("In-call messages");
-              setDrawerChild(<MeetingMessages />);
-              setOpen(false);
-            }}
-          />
-        </SpeedDial>
       </div>
     </div>
   );
