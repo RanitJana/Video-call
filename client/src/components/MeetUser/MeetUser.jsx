@@ -1,27 +1,7 @@
-import { memo, useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import MicIcon from "@mui/icons-material/Mic";
-
-const VideoComponent = memo(({ stream }) => {
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
-  return (
-    <div className="absolute top-0 left-0 w-full h-full rounded-xl">
-      <video
-        ref={videoRef}
-        className="absolute left-0 top-0 h-full w-full"
-        autoPlay
-        playsInline
-      />
-    </div>
-  );
-});
+import VideoComponent from "../VideoContainer/VideoContainer.jsx";
 
 function MeetUser({ peer }) {
   const { stream, isAudioEnabled, isVideoEnabled, info } = peer;

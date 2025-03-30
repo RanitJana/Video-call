@@ -13,7 +13,6 @@ import { useSearchParams } from "react-router";
 //service and context
 import peerService from "../service/peer.js";
 import { useSocketContext } from "../context/SocketContext.jsx";
-import { getUserMedia } from "../service/getMedia.js";
 
 //custom hooks
 import useICEcandidate from "../hooks/useICEcandidate.js";
@@ -31,7 +30,7 @@ import { addMessage } from "../features/messages/message.slice.js";
 import useReceiveEmoji from "../hooks/useReceiveEmoji.js";
 import useDeviceWidth from "../hooks/useDeviceWidth.js";
 
-const Meet = memo(() => {
+const Meet = memo(({ auth, peer, setPeer, myInfo, setMyInfo }) => {
   //socket info
   const { socket } = useSocketContext();
 
@@ -42,24 +41,13 @@ const Meet = memo(() => {
   const params = useSearchParams()[0];
   const roomId = useMemo(() => params.get("id"), [params]);
 
-  //peer management
-  const [peer, setPeer] = useState(new peerService());
-
   //auth info
-  const auth = useSelector((state) => state.auth);
   const drawer = useSelector((state) => state.drawer);
 
   // drawer info
   const [drawerHeading, setDrawerHeading] = useState("");
   const [drawerChild, setDrawerChild] = useState(null);
 
-  //user info and streams
-  const [myInfo, setMyInfo] = useState({
-    info: auth.data,
-    stream: null,
-    isAudioEnabled: false,
-    isVideoEnabled: false,
-  });
   const [otherInfo, setOtherInfo] = useState({
     info: null,
     stream: null,
@@ -83,34 +71,6 @@ const Meet = memo(() => {
   ); //receive incoming call
   const handleCallAccepted = useHandleAccepted(peer, setOtherInfo); //accepted response to caller
 
-  const handleInitialStream = useCallback(async () => {
-    try {
-      if (peer.peer.connectionState == "closed") return;
-
-      const myStream = await getUserMedia(true, true);
-
-      const videoTrack = myStream.getVideoTracks()[0];
-
-      const videoSender = peer.peer
-        .getSenders()
-        .find((sender) => sender.track && sender.track.kind === "video");
-
-      if (videoSender && videoTrack) await videoSender.replaceTrack(videoTrack);
-      else
-        myStream.getTracks().forEach((track) => {
-          peer.peer.addTrack(track, myStream);
-        });
-
-      setMyInfo((prev) => ({
-        ...prev,
-        stream: myStream,
-        isAudioEnabled: true,
-        isVideoEnabled: true,
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-  }, [peer.peer]); //add stream to the peer conenction initially
   const handleReset = useCallback(() => {
     setOtherInfo({
       info: null,
@@ -125,7 +85,7 @@ const Meet = memo(() => {
       handleCallUser();
     }, 500);
     socket.emit("join:room", { roomId, email: auth.data.email });
-  }, [peer, handleCallUser, socket, roomId, auth.data.email]); //reset the connection
+  }, [peer.peer, socket, roomId, auth.data.email, setPeer, handleCallUser]); //reset the connection
 
   //initially invoke call user
   useEffect(() => {
@@ -144,11 +104,6 @@ const Meet = memo(() => {
       socketEventRemover(socket, listeners);
     };
   }, [handleCallAccepted, handleIncomingCall, handleReset, socket]);
-
-  //handle initial-stream
-  useEffect(() => {
-    handleInitialStream();
-  }, [handleInitialStream]);
 
   //  Notify when user leaves or refreshes
   useEffect(() => {
