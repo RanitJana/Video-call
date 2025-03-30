@@ -139,7 +139,7 @@ function ReadyMeet() {
                 onClick={handleJoin}
                 style={{
                   width: "10rem",
-                  // fontSize: "0.4rem",
+                   fontSize: "0.8rem",
                 }}
                 backgroundColor={"#2C82FA"}
               >
