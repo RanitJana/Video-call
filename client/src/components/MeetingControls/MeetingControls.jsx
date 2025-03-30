@@ -71,11 +71,15 @@ function MeetingControls({
           <GetDate />
         </div>
       )}
-      <div className="flex justify-center items-center gap-1 w-full">
+      <div className="flex justify-center items-center gap-[0.3rem] w-full">
         {/* audio */}
         <Button
           onClick={toggleAudio}
           backgroundColor={!detectAudioState() ? "#B33D23" : null}
+          style={{
+            minWidth: "0",
+            width: "3.5rem",
+          }}
         >
           {detectAudioState() ? <MicIcon /> : <MicOffIcon />}
         </Button>
@@ -83,6 +87,10 @@ function MeetingControls({
         <Button
           onClick={toggleVideo}
           backgroundColor={!detectVideoState() ? "#B33D23" : null}
+          style={{
+            minWidth: "0",
+            width: "3.5rem",
+          }}
         >
           {detectVideoState() ? (
             <VideocamOutlinedIcon />
@@ -96,6 +104,10 @@ function MeetingControls({
           <Button
             onClick={() => setEmojiOpen((prev) => !prev)}
             backgroundColor={emojiOpen ? "purple" : null}
+            style={{
+              minWidth: "0",
+              width: "3.5rem",
+            }}
           >
             <EmojiEmotionsOutlinedIcon />
           </Button>
@@ -104,8 +116,8 @@ function MeetingControls({
         <Button
           style={{
             minWidth: "0",
-            paddingLeft:"5px",
-            paddingRight:"5px",
+            paddingLeft: "5px",
+            paddingRight: "5px",
           }}
           onClick={() => setIsDrawerOpen((prev) => !prev)}
         >
@@ -201,10 +213,17 @@ function MeetingControls({
           </div>
         </SwipeableDrawer>
 
-        {/* <span className="text-gray-500">│</span> */}
+        <div className="h-[80%] bg-gray-700 w-[2px] mx-1"></div>
 
         {/* call end */}
-        <Button onClick={() => {}} backgroundColor={"#DD402F"}>
+        <Button
+          onClick={() => {}}
+          backgroundColor={"#DD402F"}
+          style={{
+            minWidth: "0",
+            width: "3.5rem",
+          }}
+        >
           <CallEndIcon />
         </Button>
       </div>

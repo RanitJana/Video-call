@@ -73,7 +73,7 @@ function MeetUser({ peer }) {
       style={{
         borderWidth: info ? "3px" : "0px",
         borderStyle: "solid",
-        borderColor: speaking && isAudioEnabled? "#007FFF" : "transparent",
+        borderColor: speaking && isAudioEnabled ? "#007FFF" : "transparent",
         transition: "all 0.3s ease",
         height: "100%",
         width: info ? "100%" : "0px",
@@ -103,7 +103,7 @@ function MeetUser({ peer }) {
         {isVideoEnabled && <VideoComponent stream={stream} />}
 
         <div
-          className="h-[80%] max-h-[8rem] aspect-square rounded-full overflow-hidden"
+          className="w-[80%] max-w-[8rem] aspect-square rounded-full overflow-hidden"
           style={{
             background: `#6a7282 url(${
               info?.avatar || ""

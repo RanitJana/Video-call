@@ -17,8 +17,6 @@ function MeetEmoji({ emojiOpen = false }) {
     const delay = 1000;
 
     return (emoji) => {
-      console.log("clicked");
-      
       if (Date.now() - prevTimeRef.current > delay) {
         prevTimeRef.current = Date.now();
         const sender = auth.data.name;
@@ -31,7 +29,7 @@ function MeetEmoji({ emojiOpen = false }) {
 
   return (
     <div
-      className="absolute top-0 left-[50%] translate-x-[-50%] translate-y-[-120%] bg-[rgb(51,53,55)] px-3 py-1 rounded-2xl transition-all"
+      className="absolute top-0 left-[50%] translate-x-[-50%] translate-y-[-120%] bg-[rgb(51,53,55)] px-3 py-1 rounded-2xl transition-all max-w-[80dvw] overflow-x-scroll"
       style={{
         scale: emojiOpen ? "1" : "0",
       }}
