@@ -64,12 +64,28 @@ function MeetUser({ peer }) {
     }
   }, [startSpeechDetection, isAudioEnabled]);
 
+  const fullScreenRef = useRef(null);
+
+  const toogleFullScreen = () => {
+    try {
+      const element = fullScreenRef.current;
+      if (element) {
+        if (!document.fullscreenElement) element.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Only render if we have info to display
   if (!info && !stream) return null;
 
   return (
     <div
-      className="relative rounded-xl overflow-hidden"
+      ref={fullScreenRef}
+      onDoubleClick={toogleFullScreen}
+      className="relative rounded-xl overflow-hidden hover:cursor-pointer"
       style={{
         borderWidth: info ? "3px" : "0px",
         borderStyle: "solid",

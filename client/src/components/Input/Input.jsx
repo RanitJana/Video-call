@@ -1,6 +1,6 @@
 import React from "react";
 
-function Input({ width, height }) {
+function Input({ width, height, value = "", setValue = () => {} }) {
   return (
     <div className="relative">
       <img
@@ -12,6 +12,8 @@ function Input({ width, height }) {
         type="text"
         name=""
         id=""
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
         placeholder="Enter a code"
         className="border-[1px] border-gray-500 text-gray-700 outline-none hover:border-gray-700 rounded-2xl p-2 pl-12 font-semibold"
         style={{ height, width }}

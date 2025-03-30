@@ -4,33 +4,30 @@ import Input from "../components/Input/Input.jsx";
 import { useNavigate } from "react-router";
 import NavBar from "../components/Navbar/NavBar.jsx";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import { nanoid } from "nanoid";
+import { toast } from "react-toastify";
 
 function Home() {
   const [newMeetingClicked, setNewMeetingClicked] = useState(false);
   const [joinClicked, setJoinClicked] = useState(false);
+
+  const [value, setValue] = useState("");
 
   const navigate = useNavigate();
 
   const handleJoinNewMeeting = async () => {
     if (newMeetingClicked) return;
     setNewMeetingClicked(true);
-    await new Promise((res) => {
-      setTimeout(() => {
-        res("Done");
-        navigate("/meet?id=45");
-      }, 1000);
-    });
+    const id = nanoid(10);
+    navigate(`/meet?id=${id}`);
     setNewMeetingClicked(false);
   };
 
   const handleJoinExistingMeeting = async () => {
     if (joinClicked) return;
+    if (value.length != 10) return toast.error("Invalid meeting id");
     setJoinClicked(true);
-    await new Promise((res) => {
-      setTimeout(() => {
-        res("Done");
-      }, 3000);
-    });
+    navigate(`/meet?id=${value}`);
     setJoinClicked(false);
   };
 
@@ -53,20 +50,29 @@ function Home() {
             >
               <div
                 className="flex
-               justify-center items-center gap-2 px-4 lowercase font-bold"
+              justify-center items-center gap-2 px-4 lowercase font-bold"
               >
                 <span>New meeting</span>
-                {<VideocamIcon />}
+                <VideocamIcon />
               </div>
             </ButtonCustom>
             <div className="flex gap-2">
-              <Input width={"12rem"} height={"3rem"} />
+              <Input
+                width={"12rem"}
+                height={"3rem"}
+                value={value}
+                setValue={setValue}
+              />
               <ButtonCustom
                 backgroundColor={"#dce9fa"}
                 isSubmit={joinClicked}
                 onClick={handleJoinExistingMeeting}
               >
-                <span className="text-[#2C82FA] font-bold lowercase">Join</span>
+                {!joinClicked && (
+                  <span className="text-[#2C82FA] font-bold lowercase">
+                    Join
+                  </span>
+                )}
               </ButtonCustom>
             </div>
           </div>

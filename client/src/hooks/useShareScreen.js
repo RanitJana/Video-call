@@ -31,9 +31,7 @@ export default function useShareScreen(myInfo, setMyInfo, peer) {
 
       const screenStream = await getDeviceMedia(detectAudioState(), true);
       const screenTrack = screenStream.getVideoTracks()[0];
-
       if (!screenTrack) return;
-
       const newStream = new MediaStream([screenTrack]);
       const originalAudioTrack = myInfo.stream.getAudioTracks()[0];
       if (originalAudioTrack) {

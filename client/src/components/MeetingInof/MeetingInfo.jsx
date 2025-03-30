@@ -1,13 +1,18 @@
 import React from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Button from "../Button/ButtonCustom.jsx";
+import { useSearchParams } from "react-router";
+import { toast } from "react-toastify";
 
 function MeetingInfo() {
+  const params = useSearchParams()[0];
+  const id = params.get("id");
+
   return (
     <div className="text-sm flex flex-col gap-2 py-8">
-      <p className="font-bold">Joining info</p>
+      <p className="font-bold">Meeting id</p>
       <div className="flex flex-col">
-        <p className="text-gray-700">{window.location.href}</p>
+        <p className="text-gray-700">{id}</p>
         <Button
           backgroundColor={"transparent"}
           style={{
@@ -21,11 +26,16 @@ function MeetingInfo() {
             marginLeft: "-0.25rem",
           }}
           onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
+            try {
+              navigator.clipboard.writeText(id);
+              toast.success("Copied to clipboard");
+            } catch {
+              toast.error("Unable to copy");
+            }
           }}
         >
           <ContentCopyIcon style={{ width: "1.2rem" }} />
-          <span className="font-bold lowercase">Copy joining info</span>
+          <span className="font-bold lowercase">Copy Meeting id</span>
         </Button>
       </div>
       <hr className="text-gray-400 mt-4" />
