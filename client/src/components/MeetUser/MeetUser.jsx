@@ -1,12 +1,21 @@
+//react
 import { useCallback, useEffect, useState, useRef } from "react";
+
+//icons
 import MicOffIcon from "@mui/icons-material/MicOff";
 import MicIcon from "@mui/icons-material/Mic";
 import VideoComponent from "../VideoContainer/VideoContainer.jsx";
 
 function MeetUser({ peer }) {
   const { stream, isAudioEnabled, isVideoEnabled, info } = peer;
+
+  //state to detect speaking
   const [speaking, setSpeaking] = useState(false);
 
+  //reference to the user section
+  const fullScreenRef = useRef(null);
+
+  //detect speech
   const startSpeechDetection = useCallback(async () => {
     if (!stream || !isAudioEnabled) return;
 
@@ -37,15 +46,14 @@ function MeetUser({ peer }) {
     }
   }, [stream, isAudioEnabled]);
 
+  // invoke initially
   useEffect(() => {
     if (isAudioEnabled) {
-      // Uncomment this when ready to use speech detection
       startSpeechDetection();
     }
   }, [startSpeechDetection, isAudioEnabled]);
 
-  const fullScreenRef = useRef(null);
-
+  //toogle full screen
   const toogleFullScreen = () => {
     try {
       const element = fullScreenRef.current;

@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
+//react
+import React, { useCallback, useEffect, useState } from "react";
+
+//redux
 import { useDispatch } from "react-redux";
-import Button from "../Button/ButtonCustom.jsx";
-import GetDate from "../GetDate/GateDate.jsx";
-import MeetEmoji from "../MeetEmoji/MeetEmoji.jsx";
+import { toggleDrawer } from "../../features/drawerOpen/drawer.slice.js";
+
+//custom hooks
 import useMediaToggle from "../../hooks/useMediaToogle.js";
 import useDetectMediaState from "../../hooks/useDetectMediaState.js";
 import useShareScreen from "../../hooks/useShareScreen.js";
-import MeetingInfo from "../MeetingInof/MeetingInfo.jsx";
-import { toggleDrawer } from "../../features/drawerOpen/drawer.slice.js";
 
+//components
+import Button from "../Button/ButtonCustom.jsx";
+import GetDate from "../GetDate/GateDate.jsx";
+import MeetEmoji from "../MeetEmoji/MeetEmoji.jsx";
+import MeetingInfo from "../MeetingInof/MeetingInfo.jsx";
+import MeetingMessages from "../MeetingMessages/MeetingMessages.jsx";
+
+// icons
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
@@ -18,9 +27,9 @@ import PresentToAllIcon from "@mui/icons-material/PresentToAll";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
-import MeetingMessages from "../MeetingMessages/MeetingMessages.jsx";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
+//MUI
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
 function MeetingControls({
@@ -30,28 +39,21 @@ function MeetingControls({
   setDrawerHeading,
   setDrawerChild,
 }) {
-  const [emojiOpen, setEmojiOpen] = useState(false);
   const dispatch = useDispatch();
 
-  const { detectAudioState, detectVideoState } = useDetectMediaState(myInfo);
-  const { toggleAudio, toggleVideo } = useMediaToggle(myInfo, setMyInfo, peer);
-  const shareScreen = useShareScreen(myInfo, setMyInfo, peer);
-
+  //states
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [smallScreen, setSmallScreen] = useState(false);
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  //utilities
+  const { detectAudioState, detectVideoState } = useDetectMediaState(myInfo);
+  const { toggleAudio, toggleVideo } = useMediaToggle(myInfo, setMyInfo, peer);
 
-  useEffect(() => {
-    const handleScreenSize = () => {
-      if (window.innerWidth <= 564) setSmallScreen(true);
-      else setSmallScreen(false);
-    };
-    handleScreenSize();
+  //screen share method
+  const shareScreen = useShareScreen(myInfo, setMyInfo, peer);
 
-    window.addEventListener("resize", handleScreenSize);
-    return () => window.removeEventListener("resize", handleScreenSize);
-  }, []);
-
+  //toogle more button
   const toggleMore = (open) => (event) => {
     if (
       event &&
@@ -63,6 +65,19 @@ function MeetingControls({
 
     setIsDrawerOpen(open);
   };
+
+  //small screen detection
+  const handleScreenSize = useCallback(() => {
+    if (window.innerWidth <= 564) setSmallScreen(true);
+    else setSmallScreen(false);
+  }, []);
+
+  //detect an take action based on screen width
+  useEffect(() => {
+    handleScreenSize();
+    window.addEventListener("resize", handleScreenSize);
+    return () => window.removeEventListener("resize", handleScreenSize);
+  }, [handleScreenSize]);
 
   return (
     <div className="flex gap-4 w-full pt-4 justify-center relative">

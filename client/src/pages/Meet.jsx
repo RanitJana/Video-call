@@ -48,6 +48,7 @@ const Meet = memo(({ auth, peer, setPeer, myInfo, setMyInfo }) => {
   const [drawerHeading, setDrawerHeading] = useState("");
   const [drawerChild, setDrawerChild] = useState(null);
 
+  //remote user info
   const [otherInfo, setOtherInfo] = useState({
     info: null,
     stream: null,
@@ -71,21 +72,53 @@ const Meet = memo(({ auth, peer, setPeer, myInfo, setMyInfo }) => {
   ); //receive incoming call
   const handleCallAccepted = useHandleAccepted(peer, setOtherInfo); //accepted response to caller
 
-  const handleReset = useCallback(() => {
+  const handleReset = useCallback(async () => {
+    //close previous connection and create a new peer connection
+    peer.peer.close();
+    const newPeer = new peerService();
+    setPeer(newPeer);
+
+    try {
+      const myStream = myInfo.stream;
+
+      if (myStream) {
+        const videoTrack = myStream.getVideoTracks()[0];
+
+        const videoSender = newPeer.peer
+          .getSenders()
+          .find((sender) => sender.track && sender.track.kind === "video");
+
+        if (videoSender) await videoSender.replaceTrack(videoTrack);
+        else
+          myStream.getTracks().forEach((track) => {
+            newPeer.peer.addTrack(track, myStream);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
     setOtherInfo({
       info: null,
       stream: null,
       isAudioEnabled: false,
       isVideoEnabled: false,
     });
-    peer.peer.close();
+
     setTimeout(() => {
-      const newPeer = new peerService();
-      setPeer(newPeer);
       handleCallUser();
     }, 500);
+
     socket.emit("join:room", { roomId, email: auth.data.email });
-  }, [peer.peer, socket, roomId, auth.data.email, setPeer, handleCallUser]); //reset the connection
+  }, [
+    peer.peer,
+    setPeer,
+    socket,
+    roomId,
+    auth.data.email,
+    myInfo.stream,
+    handleCallUser,
+  ]); //reset the connection
 
   //initially invoke call user
   useEffect(() => {
