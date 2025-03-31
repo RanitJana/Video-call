@@ -56,6 +56,8 @@ function ReadyMeet() {
         isAudioEnabled: true,
         isVideoEnabled: true,
       }));
+      //crate a new RTC peer connection
+      setPeer(new peerService());
     } catch (error) {
       console.log(error);
     }
@@ -66,29 +68,25 @@ function ReadyMeet() {
     try {
       const myStream = myInfo.stream;
 
-      //crate a new RTC peer connection
-      const newPeer = new peerService();
-      setPeer(newPeer);
-
-      if (!myStream) return;
+      if (!myStream || !peer) return;
 
       const videoTrack = myStream.getVideoTracks()[0];
 
-      const videoSender = newPeer.peer
+      const videoSender = peer.peer
         .getSenders()
         .find((sender) => sender.track && sender.track.kind === "video");
 
       if (videoSender) await videoSender.replaceTrack(videoTrack);
       else
         myStream.getTracks().forEach((track) => {
-          newPeer.peer.addTrack(track, myStream);
+          peer.peer.addTrack(track, myStream);
         });
 
       setIsReady(true);
     } catch (error) {
       console.log(error);
     }
-  }, [myInfo.stream]);
+  }, [myInfo.stream, peer]);
 
   //invoke at initial render
   useEffect(() => {
