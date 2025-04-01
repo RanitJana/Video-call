@@ -1,15 +1,14 @@
 import { useGoogleLogin } from "@react-oauth/google";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { handleLogin } from "../../api/auth.api.js";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../features/auth/auth.slice.js";
 
-function GoogleLoginButton({children}) {
-  const [isSubmit, setSubmit] = useState(false);
-
+function GoogleLoginButton({ setSubmit, isSubmit, children }) {
   const dispatch = useDispatch();
   const login = async (authResponse) => {
     if (isSubmit) return;
+    setSubmit(true);
     try {
       const response = await handleLogin({
         access_token: authResponse.access_token,
@@ -25,8 +24,6 @@ function GoogleLoginButton({children}) {
           localStorage.setItem("_res_info", JSON.stringify(user));
         } else console.log(message);
       }
-
-      setSubmit(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -48,7 +45,14 @@ function GoogleLoginButton({children}) {
   });
 
   return (
-    <div onClick={googleLogin} >{children}</div>
+    <div
+      onClick={() => {
+        if (isSubmit) return;
+        googleLogin();
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
