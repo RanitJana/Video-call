@@ -11,7 +11,7 @@ export default function useReceiveEmoji(socket) {
   const handleReceiveEmoji = useCallback(
     ({ sender, emoji }) => {
       dispatch(addEmoji({ sender, emoji }));
-      setTimeout(() => dispatch(removeFirstEmoji()), 10000);
+      setTimeout(() => dispatch(removeFirstEmoji()), 4000);
     },
     [dispatch]
   );

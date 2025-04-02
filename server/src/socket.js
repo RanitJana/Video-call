@@ -34,7 +34,7 @@ export default function realTime(server) {
     });
 
     socket.on("room:emoji:fire", ({ to, sender, emoji }) => {
-      io.to(to).emit("room:emoji:listen", { sender, emoji });
+      socket.to(to).emit("room:emoji:listen", { sender, emoji });
     });
 
     socket.on("send:message", ({ to, info }) => {
