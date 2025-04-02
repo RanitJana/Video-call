@@ -9,9 +9,9 @@ export default function FloatingEmoji() {
   return (
     <div className="absolute z-10 bottom-0 left-0 w-full h-screen pointer-events-none">
       <AnimatePresence>
-        {emojis.map((emoji, idx) => (
+        {emojis.map((emoji) => (
           <motion.div
-            key={idx}
+            key={emoji.id}
             initial={{ y: "90vh", x: Math.random() * 200 - 100, opacity: 1 }}
             animate={{ y: "10vh", opacity: [1, 0.5, 0] }}
             exit={{ opacity: 0 }}

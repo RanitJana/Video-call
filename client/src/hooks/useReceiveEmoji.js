@@ -2,8 +2,8 @@ import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
   addEmoji,
-  removeFirstEmoji,
-} from "../features/floatingEmoji/floatingEmoji.slice";
+  // removeFirstEmoji,
+} from "../features/floatingEmoji/floatingEmoji.slice.js";
 
 export default function useReceiveEmoji(socket) {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ export default function useReceiveEmoji(socket) {
   const handleReceiveEmoji = useCallback(
     ({ sender, emoji }) => {
       dispatch(addEmoji({ sender, emoji }));
-      setTimeout(() => dispatch(removeFirstEmoji()), 4000);
+      // setTimeout(() => dispatch(removeFirstEmoji()), 4000);
     },
     [dispatch]
   );

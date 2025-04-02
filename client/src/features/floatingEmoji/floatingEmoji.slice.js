@@ -1,18 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const floatingEmoji = createSlice({
   name: "Floating emoji",
   initialState: [],
   reducers: {
     addEmoji: (state, action) => {
-      state.push(action.payload);
-    },
-    removeFirstEmoji: (state) => {
-      if (state.length) state.shift();
+      if (state.length > 1) state.shift();
+      const newEmoji = { ...action.payload, id: nanoid() }; // Create a new object
+      state.push(newEmoji);
     },
   },
 });
 
-export const { addEmoji, removeFirstEmoji } = floatingEmoji.actions;
+export const { addEmoji } = floatingEmoji.actions;
 
 export default floatingEmoji.reducer;

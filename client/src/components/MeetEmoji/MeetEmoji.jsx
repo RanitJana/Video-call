@@ -2,10 +2,7 @@ import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSocketContext } from "../../context/SocketContext.jsx";
 import { useSearchParams } from "react-router";
-import {
-  addEmoji,
-  removeFirstEmoji,
-} from "../../features/floatingEmoji/floatingEmoji.slice.js";
+import { addEmoji } from "../../features/floatingEmoji/floatingEmoji.slice.js";
 
 function MeetEmoji({ emojiOpen = false }) {
   const auth = useSelector((state) => state.auth);
@@ -27,7 +24,6 @@ function MeetEmoji({ emojiOpen = false }) {
         prevTimeRef.current = Date.now();
         const sender = auth.data.name;
         dispatch(addEmoji({ sender, emoji }));
-        setTimeout(() => removeFirstEmoji(), 10000);
         socket.emit("room:emoji:fire", { to: roomId, sender, emoji });
       }
     };
